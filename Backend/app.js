@@ -1,0 +1,27 @@
+require('dotenv').config({ path: './.env' });
+const express = require('express');
+const bodyParser = require('body-parser');
+const db = require('./models/connect')
+const userRouter = require('./routes/users');
+const cors = require('cors');
+const PORT = process.env.PORT;
+
+
+const app = express();
+
+//body-parser set-up
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+app.use(cors());
+
+
+// routes setup
+app.use('/user',userRouter);
+
+
+
+
+app.listen(PORT, () => {
+    console.log("server is running at port-3000 ");
+})
