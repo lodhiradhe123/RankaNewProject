@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate= useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add registration logic here
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    axios.post("http://localhost:3000/user",{
-      name,
-      email,
-      password
-    });
-    navigate('/login');
+   
+    
+    await axios
+      .post("http://localhost:3000/user", {
+        name,
+        email,
+        password,
+      })
+      .then((response) => {
+        if (response.data) {
+          console.log(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          // alert("signUp success");
+          toast.success('User Register Successfully !');
+          navigate("/login");
+        }
+      })
+      .catch((error) => {
+        // alert(error.response.data.message);
+        toast.error(error.response.data.message);
+        // console.log(error.message);
+      });
   };
 
   return (
@@ -68,7 +81,7 @@ const Register = () => {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <span className="text-gray-600">Already have an account?</span>{' '}
+          <span className="text-gray-600">Already have an account?</span>{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
             Login
           </Link>

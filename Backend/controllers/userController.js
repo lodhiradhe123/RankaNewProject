@@ -9,7 +9,7 @@ exports.registerUser = async (req, res, next) => {
         const { name, email, password } = req.body;
         const user = await User.findOne({ email });
         if (user) {
-            res.status(400).send('User already exists')
+            res.status(400).send({ message: 'User already exists' })
         } else {
             const userCreate = await User(
                 {
@@ -20,33 +20,34 @@ exports.registerUser = async (req, res, next) => {
             )
             await userCreate.save();
             console.log("User register successfully");
-            res.status(200).send("user created successfully")
+            res.status(200).send({ message: "user created successfully", user: userCreate })
 
         }
-
-
     } catch (error) {
-        res.send(error.message)
+        console.log(error);
     }
 }
 
 exports.loginUser = async (req, res, next) => {
-    if (req.body.email && req.body.password) {
-        try {
-            const user = await User.findOne({ email: req.body.email })
 
-            const isMatch = await bcrypt.compare(req.body.password, user.password);
-            if (!isMatch || !user) {
-                return res.status(400).send("Invalid email or password")
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ email })
+        // console.log(user === null);
+        if (!(user === null)) {
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                res.status(400).send({ message: "Invalid email or password" })
             } else {
                 res.status(200).send({ meassage: "User logged_in successfully", user: user });
             }
 
-
-        } catch (err) {
-            res.send(err.message)
+        } else {
+            res.status(404).send({ message: "Invalid email or password" })
         }
-    } else {
-        res.status(400).send("Invalid email or password")
+
+    } catch (err) {
+        res.send(err.message)
     }
+
 }

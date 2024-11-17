@@ -17,12 +17,13 @@ const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home"); // Tracks active link
 
-  const isAuthenticated = !!localStorage.getItem("token");
-  const userRole = localStorage.getItem("role");
+  const isAuthenticated = localStorage.getItem("user");
+  // const userRole = localStorage.getItem("role");
+  const userRole = "Admin"
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -36,7 +37,7 @@ const Navbar = () => {
           <h1>Ranka</h1>
         </div>
 
-        {/* Hamburger menu for mobile */}
+       
         <button
           className="md:hidden text-gray-800 text-2xl"
           onClick={toggleMenu}

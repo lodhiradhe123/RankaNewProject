@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import axios from "axios";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate= useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
-    axios.post("http://localhost:3000/user/login",{
-      email,
-      password
-    }); 
-    navigate('/Home'); 
+    // console.log({ email, password });
+    await axios
+      .post("http://localhost:3000/user/login", {
+        email,
+        password,
+      })
+      .then((response) => {
+        if (response) {
+          console.log(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          toast.success('User Logged in successfully !');
 
+          navigate("/Home");
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
   };
 
   return (
@@ -24,7 +37,9 @@ function Login() {
         <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
         <form className="space-y-4" onSubmit={handleLogin}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -35,7 +50,9 @@ function Login() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -53,8 +70,11 @@ function Login() {
           </button>
         </form>
         <p className="text-sm text-center text-gray-600">
-          Don’t have an account?{' '}
-          <a href="/register" className="font-medium text-blue-500 hover:underline">
+          Don’t have an account?{" "}
+          <a
+            href="/register"
+            className="font-medium text-blue-500 hover:underline"
+          >
             Sign up
           </a>
         </p>
